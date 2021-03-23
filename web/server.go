@@ -2,7 +2,6 @@ package web
 
 import (
 	"context"
-	"log"
 	"net/http"
 
 	"github.com/lajosbencz/go-geonames/models"
@@ -10,9 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewServer(ctx context.Context, listen string, dsn string) (err error) {
+func NewServer(ctx context.Context, listen string, dsn string) (srv *http.Server, err error) {
 
-	// dsn := "geonames:geonames@tcp(127.0.0.1:3316)/geonames?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return
@@ -31,36 +29,9 @@ func NewServer(ctx context.Context, listen string, dsn string) (err error) {
 	mux.Handle("/list/languages", http.HandlerFunc(handlers.HandleListLanguages))
 	mux.Handle("/geocode", http.HandlerFunc(handlers.HandleGeocode))
 
-	srv := &http.Server{
+	srv = &http.Server{
 		Addr:    listen,
 		Handler: mux,
-	}
-
-	go func() {
-		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %+s\n", err)
-		}
-	}()
-
-	log.Println("Server listening on " + listen)
-
-	<-ctx.Done()
-
-	log.Printf("server stopped")
-
-	// ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer func() {
-	// 	cancel()
-	// }()
-
-	// if err = srv.Shutdown(ctxShutDown); err != nil {
-	// 	log.Fatalf("server Shutdown Failed:%+s", err)
-	// }
-
-	log.Printf("server exited properly")
-
-	if err == http.ErrServerClosed {
-		err = nil
 	}
 
 	return
