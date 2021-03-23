@@ -1,4 +1,10 @@
 
+dist/
+
 go.sum
+
+/go-geonames
+
+/temp
 
 !**/.gitkeep
