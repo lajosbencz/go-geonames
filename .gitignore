@@ -7,4 +7,6 @@ go.sum
 
 /temp
 
+.env
+
 !**/.gitkeep
