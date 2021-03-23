@@ -48,8 +48,6 @@ func main() {
 		}
 		dsn = dsnUser + dsn
 	}
-	fmt.Println(listen, dsn)
-	return
 
 	ctx, cancel := context.WithCancel(context.Background())
 
